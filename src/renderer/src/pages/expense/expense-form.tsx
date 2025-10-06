@@ -44,13 +44,9 @@ function ExpenseForm() {
   const onFinish = async (values: any): Promise<any> => {
     try {
       const payload = {
-        expenseHead: {
-          connect: {
-            id: Number(values.expenseHead)
-          }
-        },
+        expenseHeadId: values.expenseHead || null,
         name: values.name,
-        date: values.date?.toISOString(),
+        date: new Date(values.date),
         invoiceNumber: values.invoiceNumber || null,
         amount: Number(values.amount),
         // attachment: fileList[0]?.name || null, // nanti bisa ganti jadi file upload ke server

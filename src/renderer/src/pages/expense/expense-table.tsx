@@ -50,7 +50,7 @@ const expenseColumns = [
 
 export function ExpenseTable() {
   const navigate = useNavigate()
-  const { data, refetch } = useQuery({
+  const { data, refetch, isError } = useQuery({
     queryKey: ['expense', 'list'],
     queryFn: () => window.api.query.expense.list()
   })
@@ -59,7 +59,7 @@ export function ExpenseTable() {
     <div>
       <div className="flex justify-between items-center">
         <Input type="text" placeholder="Search" className="max-w-sm" />
-        <div className="flex gap-4">
+        <div className="flex gap-2">
           <Button onClick={() => window.api.query.expense.seed().then(() => refetch())}>
             Seed
           </Button>
@@ -77,12 +77,8 @@ export function ExpenseTable() {
           </Button>
         </div>
       </div>
-      <Table
-        dataSource={data?.success ? data?.data || [] : []}
-        columns={expenseColumns}
-        size="small"
-        className="mt-4"
-      />
+      {isError || (!data?.success && <div className="text-red-500">{data?.error}</div>)}
+      <Table dataSource={data?.data || []} columns={expenseColumns} size="small" className="mt-4" />
     </div>
   )
 }

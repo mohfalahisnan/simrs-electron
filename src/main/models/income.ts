@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import { sequelize } from '../database'
+import z from 'zod'
 
 export const Income = sequelize.define(
   'Income',
@@ -19,3 +20,12 @@ export const Income = sequelize.define(
     indexes: [{ fields: ['date'] }, { fields: ['invoiceNumber'] }]
   }
 )
+
+export const IncomeSchema = z.object({
+  incomeHeadId: z.string(),
+  name: z.string().min(3).max(20),
+  date: z.date(),
+  invoiceNumber: z.string().min(0).max(100),
+  amount: z.number().int().min(0),
+  description: z.string().min(0).max(200)
+})

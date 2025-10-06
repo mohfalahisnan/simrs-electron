@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import { sequelize } from '../database'
+import z from 'zod'
 
 export const IncomeHead = sequelize.define('IncomeHead', {
   id: { type: DataTypes.UUID, defaultValue: DataTypes.UUID, primaryKey: true },
@@ -7,4 +8,9 @@ export const IncomeHead = sequelize.define('IncomeHead', {
   notes: { type: DataTypes.STRING },
   createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
+})
+
+export const IncomeHeadSchema = z.object({
+  name: z.string().min(3).max(20),
+  notes: z.string().min(0).max(200)
 })

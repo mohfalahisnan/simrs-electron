@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import { sequelize } from '../database'
+import z from 'zod'
 
 export const ExpenseAttachment = sequelize.define('ExpenseAttachment', {
   id: { type: DataTypes.UUID, defaultValue: DataTypes.UUID, primaryKey: true },
@@ -9,4 +10,12 @@ export const ExpenseAttachment = sequelize.define('ExpenseAttachment', {
   mimeType: { type: DataTypes.STRING },
   size: { type: DataTypes.INTEGER },
   createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
+})
+
+export const ExpenseAttachmentSchema = z.object({
+  expenseId: z.string().uuid(),
+  url: z.string().url(),
+  filename: z.string().min(0).max(200),
+  mimeType: z.string().min(0).max(200),
+  size: z.number().int().min(0)
 })

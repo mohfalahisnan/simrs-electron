@@ -1,5 +1,5 @@
 import z from 'zod'
-import { Expense } from '../../models/expense'
+import { Expense, ExpenseSchema, ExpenseSchemaWithId } from '../../models/expense'
 
 export const requireSession = true
 
@@ -7,80 +7,27 @@ export const schemas = {
   list: {
     result: z.object({
       success: z.boolean(),
-      data: z
-        .array(
-          z.object({
-            id: z.string(),
-            expenseHeadId: z.string().nullable(),
-            name: z.string(),
-            date: z.string(),
-            invoiceNumber: z.string().nullable(),
-            amount: z.number(),
-            description: z.string().nullable(),
-            createdBy: z.string().nullable(),
-            createdAt: z.string(),
-            updatedAt: z.string()
-          })
-        )
-        .optional(),
+      data: ExpenseSchemaWithId.array().optional(),
       error: z.string().optional()
     })
   },
   create: {
-    args: z.object({
-      expenseHeadId: z.string().optional(),
-      name: z.string(),
-      date: z.string(),
-      invoiceNumber: z.string().nullable(),
-      amount: z.number(),
-      description: z.string().optional().nullable(),
-      createdBy: z.string().optional().nullable()
-    }),
+    args: ExpenseSchema.partial(),
     result: z.object({
       success: z.boolean(),
-      data: z
-        .object({
-          id: z.string(),
-          expenseHeadId: z.string().nullable(),
-          name: z.string(),
-          date: z.string(),
-          invoiceNumber: z.string().nullable(),
-          amount: z.number(),
-          description: z.string().nullable(),
-          createdBy: z.string().nullable(),
-          createdAt: z.string(),
-          updatedAt: z.string()
-        })
-        .optional(),
+      data: ExpenseSchemaWithId.optional(),
       error: z.string().optional()
     })
   },
   update: {
-    args: z.object({
-      id: z.string(),
-      expenseHeadId: z.string().optional(),
-      name: z.string().optional(),
-      date: z.string().optional(),
-      invoiceNumber: z.string().optional(),
-      amount: z.number().optional(),
-      description: z.string().optional()
+    args: ExpenseSchemaWithId.omit({
+      createdBy: true,
+      createdAt: true,
+      updatedAt: true
     }),
     result: z.object({
       success: z.boolean(),
-      data: z
-        .object({
-          id: z.string(),
-          expenseHeadId: z.string().nullable(),
-          name: z.string(),
-          date: z.string(),
-          invoiceNumber: z.string().nullable(),
-          amount: z.number(),
-          description: z.string().nullable(),
-          createdBy: z.string().nullable(),
-          createdAt: z.string(),
-          updatedAt: z.string()
-        })
-        .optional(),
+      data: ExpenseSchemaWithId.optional(),
       error: z.string().optional()
     })
   },
@@ -106,24 +53,7 @@ export const list = async () => {
   try {
     const expenses = await Expense.findAll()
 
-    // Convert Date objects to strings for Zod validation
-    const formattedExpenses = expenses.map((expense) => {
-      const expenseData = expense.toJSON()
-      return {
-        ...expenseData,
-        date: expenseData.date instanceof Date ? expenseData.date.toISOString() : expenseData.date,
-        createdAt:
-          expenseData.createdAt instanceof Date
-            ? expenseData.createdAt.toISOString()
-            : expenseData.createdAt,
-        updatedAt:
-          expenseData.updatedAt instanceof Date
-            ? expenseData.updatedAt.toISOString()
-            : expenseData.updatedAt
-      }
-    })
-
-    return { success: true, data: formattedExpenses }
+    return { success: true, data: expenses }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to get expense list' }
   }
@@ -136,11 +66,10 @@ export const create = async (_ctx, args: z.infer<typeof schemas.create.args>) =>
       id: crypto.randomUUID(),
       expenseHeadId: args.expenseHeadId || null,
       name: args.name,
-      date: new Date(args.date),
+      date: args.date instanceof Date ? args.date : new Date(args.date || ''),
       invoiceNumber: args.invoiceNumber || null,
       amount: args.amount,
-      description: args.description || null,
-      createdBy: args.createdBy || null
+      description: args.description || null
     })
 
     // Format dates for response
