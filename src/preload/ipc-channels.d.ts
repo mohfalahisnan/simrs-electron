@@ -3,7 +3,15 @@
 declare global {
   interface Window {
     api: {
+      auth: {
+        getSession: (args?: any) => Promise<any>
+        login: (args?: any) => Promise<any>
+        logout: (args?: any) => Promise<any>
+        status: (args?: any) => Promise<any>
+      }
       user: {
+        create: (args?: any) => Promise<any>
+        get: (args?: any) => Promise<any>
         list: (args?: any) => Promise<any>
       }
     }

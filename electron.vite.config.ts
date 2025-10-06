@@ -7,13 +7,16 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
     build: {
-      rollupOptions: {
-        external: ['@prisma/client', '.prisma']
-      }
+      // Enable dev-time hot reloading (Electron auto-restart when main changes)
+      watch: {}
     }
   },
   preload: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [externalizeDepsPlugin()],
+    build: {
+      // Enable dev-time hot reloading (reload renderers when preload changes)
+      watch: {}
+    }
   },
   renderer: {
     resolve: {

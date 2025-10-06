@@ -4,10 +4,9 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { registerMacHandlers } from './ipc/macaddress'
 import { initDatabase } from './database'
-import { registerSequelizeHandler } from './ipc/sequelize'
 import { IpcRouter } from './ipc/router'
 import { SessionStore } from './ipc/protected/session-store'
-import { registerUserRoutes } from './routes/user'
+import { autoRegisterRoutes } from './routes/loader'
 
 const sessionStore = new SessionStore()
 export const router = new IpcRouter({ sessionStore })
@@ -62,10 +61,11 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
-  registerUserRoutes(router)
-  registerMacHandlers()
+
+  // Register routes
   initDatabase()
-  registerSequelizeHandler()
+  autoRegisterRoutes(router, { sessionStore })
+  registerMacHandlers()
   router.generatePreloadTypes()
   createWindow()
 
@@ -80,6 +80,7 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
+  sessionStore.clearWindowSessions()
   if (process.platform !== 'darwin') {
     app.quit()
   }

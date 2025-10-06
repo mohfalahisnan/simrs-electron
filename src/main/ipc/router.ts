@@ -10,6 +10,7 @@ export type IpcContext = {
   webContents: WebContents
   session?: unknown
   user?: unknown
+  sessionStore?: SessionStore
 }
 
 export type IpcHandler<Args = unknown, Result = unknown> = (
@@ -48,7 +49,8 @@ export class IpcRouter {
       const ctx: IpcContext = {
         event,
         senderId: event.sender.id,
-        webContents: event.sender
+        webContents: event.sender,
+        sessionStore: this.sessionStore
       }
 
       if (this.sessionStore && (args as any)?.token) {

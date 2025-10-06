@@ -14,12 +14,14 @@ const LoginForm: React.FC = () => {
   const [errorInfo, setErrorInfo] = useState<string>()
 
   const navigate = useNavigate()
-  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    if (values.password === 'admin' && values.username === 'admin') {
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    const res = await window.api.auth.login(values)
+    console.log('res', res)
+    if (res.success) {
       navigate('/dashboard')
       setErrorInfo(undefined)
     } else {
-      setErrorInfo('Invalid username or password')
+      setErrorInfo(res.error)
     }
   }
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = () => {

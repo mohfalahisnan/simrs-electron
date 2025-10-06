@@ -1,7 +1,18 @@
 import { Button } from 'antd'
-import { Link } from 'react-router'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 function DashboardHome() {
+  const [session, setSession] = useState<any>()
+  const navigate = useNavigate()
+  useEffect(() => {
+    window.api.auth.getSession().then((res) => {
+      console.log('getSession', res)
+      if (res.success) {
+        setSession(res)
+      }
+    })
+  }, [])
   return (
     <div>
       <div className="flex justify-center items-center gap-4">
@@ -15,7 +26,16 @@ function DashboardHome() {
           List Protected Users
         </Button>
       </div>
-      DashboardHome <br /> <Link to="/">back to Login</Link>
+      {session ? <div>Welcome, {session?.user?.username}</div> : <div>Not Authenticated</div>}
+      <Button
+        onClick={async () => {
+          await window.api.auth.logout()
+          setSession(undefined)
+          navigate('/')
+        }}
+      >
+        Logout
+      </Button>
     </div>
   )
 }
