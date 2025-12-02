@@ -1,8 +1,8 @@
-import { User } from '../models/user'
-import { IpcContext } from '../ipc/router'
+import z from 'zod'
 import { withError } from '../ipc/middleware'
 import { Session as SessionStore } from '../ipc/protected/session-store'
-import z from 'zod'
+import { IpcContext } from '../ipc/router'
+import { User } from '../models/user'
 
 export type Session = {
   session: SessionStore
@@ -19,7 +19,7 @@ export const schemas = {
       session: z.object(),
       user: z
         .object({
-          id: z.string(),
+          id: z.union([z.string(), z.number()]),
           username: z.string()
         })
         .optional()
@@ -33,9 +33,16 @@ export const middlewares = [withError]
 export async function login(ctx: IpcContext, data: { username: string; password: string }) {
   // seed user
   const admin = await User.findOne({ where: { username: 'admin' } })
+
   if (!admin) {
-    await User.create({ username: 'admin', password: 'admin' })
+    try {
+      await User.create({ username: 'admin', password: 'admin' })
+    } catch (e) {
+      console.error('Failed to seed admin user:', e)
+    }
   }
+  const users = await User.findAll()
+  console.log(users)
 
   const store = ctx.sessionStore
   if (!store) return { success: false, error: 'session store unavailable' }
@@ -45,7 +52,7 @@ export async function login(ctx: IpcContext, data: { username: string; password:
     return { success: false, error: 'invalid credentials' }
   }
 
-  const session = store.create(user.id)
+  const session = store.create(String(user.id))
   // Associate this window with the session for node-only auth usage
   if (typeof ctx.senderId === 'number') {
     store.authenticateWindow(ctx.senderId, session.token)
@@ -91,6 +98,6 @@ export async function getSession(ctx: IpcContext) {
   }
   const s = store.getWindowSession(ctx.senderId)
   if (!s) return { success: false, error: 'no session for window' }
-  const user = await User.findOne({ where: { id: s.userId }, raw: true })
+  const user = await User.findOne({ where: { id: Number(s.userId) }, raw: true })
   return { success: true, session: s, user }
 }

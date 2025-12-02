@@ -3,7 +3,7 @@ import { sequelize } from '../database'
 import z from 'zod'
 
 export const Attachment = sequelize.define('Attachment', {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUID, primaryKey: true },
+  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
   incomeId: { type: DataTypes.UUID, allowNull: false },
   url: { type: DataTypes.STRING, allowNull: false },
   filename: { type: DataTypes.STRING },

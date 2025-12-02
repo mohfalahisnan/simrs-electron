@@ -5,7 +5,7 @@ import z from 'zod'
 export const Income = sequelize.define(
   'Income',
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUID, primaryKey: true },
+    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     incomeHeadId: { type: DataTypes.UUID, allowNull: true },
     name: { type: DataTypes.STRING, allowNull: false },
     date: { type: DataTypes.DATE, allowNull: false },
