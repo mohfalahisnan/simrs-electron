@@ -20,6 +20,11 @@ const items = [
         key: '/dashboard/income'
       }
     ]
+  },
+
+  {
+    label: 'Patient',
+    key: '/dashboard/patient'
   }
 ]
 
