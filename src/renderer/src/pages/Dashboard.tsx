@@ -26,6 +26,11 @@ const items = [
     label: 'Patient',
     key: '/dashboard/patient'
   }
+  ,
+  {
+    label: 'Encounter',
+    key: '/dashboard/encounter'
+  }
 ]
 
 function Dashboard() {

@@ -13,6 +13,9 @@ import IncomeTable from './pages/income/income-table'
 import ExpenseForm from './pages/expense/expense-form'
 import PatientTable from './pages/patient/patient-table'
 import PatientForm from './pages/patient/patient-form'
+import Encounter from './pages/encounter/Encounter'
+import EncounterTable from './pages/encounter/encounter-table'
+import EncounterForm from './pages/encounter/encounter-form'
 
 function MainRoute() {
   const location = useLocation()
@@ -30,6 +33,11 @@ function MainRoute() {
             <Route index element={<PatientTable />} />
             <Route path="register" element={<PatientForm />} />
             <Route path="edit/:id" element={<PatientForm />} />
+          </Route>
+          <Route path="encounter" element={<Encounter />}>
+            <Route index element={<EncounterTable />} />
+            <Route path="create" element={<EncounterForm />} />
+            <Route path="edit/:id" element={<EncounterForm />} />
           </Route>
           <Route path="income" element={<Income />}>
             <Route index element={<IncomeTable />} />
