@@ -1,5 +1,5 @@
 import z from 'zod'
-import { Patient, PatientSchema, PatientSchemaWithId } from '../../models/patient'
+import { PatientSchema, PatientSchemaWithId } from '../../models/patient'
 import { IpcContext } from '../../ipc/router'
 
 export const requireSession = true
@@ -92,10 +92,37 @@ export const list = async (ctx: IpcContext) => {
 
 export const getById = async (_ctx, args: z.infer<typeof schemas.getById.args>) => {
   try {
-    const item = await Patient.findByPk(args.id)
-    return { success: true, data: item?.toJSON() as any }
-  } catch (err: any) {
-    return { success: false, error: err.message || 'Failed to get patient' }
+    const base = process.env.API_URL || process.env.BACKEND_SERVER || 'http://localhost:8810'
+    const token = _ctx?.sessionStore?.getBackendTokenForWindow?.(_ctx.senderId)
+    if (!token) {
+      return { success: false, error: 'Token backend tidak ditemukan. Silakan login terlebih dahulu.' }
+    }
+    const root = String(base).endsWith('/') ? String(base).slice(0, -1) : String(base)
+    const url = `${root}/api/patient/read/${args.id}`
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        'x-access-token': token
+      }
+    })
+    const BackendReadSchema = z.object({
+      success: z.boolean(),
+      result: PatientSchemaWithId.optional(),
+      message: z.string().optional(),
+      error: z.string().optional()
+    })
+    const raw = await res.json().catch(() => ({ success: false, error: `HTTP ${res.status}` }))
+    const parsed = BackendReadSchema.safeParse(raw)
+    if (!res.ok || !parsed.success || !parsed.data.success) {
+      const errMsg = (parsed.success ? parsed.data.error || parsed.data.message : parsed.error.message) || `Gagal mengambil detail pasien (HTTP ${res.status})`
+      return { success: false, error: errMsg }
+    }
+    return { success: true, data: parsed.data.result }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    return { success: false, error: msg }
   }
 }
 

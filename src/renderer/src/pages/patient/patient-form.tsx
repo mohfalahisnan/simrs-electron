@@ -29,6 +29,7 @@ function PatientForm() {
     if (item) {
       form.setFieldsValue({
         kode: item.kode,
+        identifier: item.identifier ?? undefined,
         name: item.name,
         gender: item.gender,
         birthDate: item.birthDate ? dayjs(item.birthDate as unknown as string) : undefined,
@@ -123,6 +124,9 @@ function PatientForm() {
         <div className="grid grid-cols-2 gap-4">
           <Form.Item label="Kode" name="kode" rules={[{ required: true, message: 'Kode wajib' }]}>
             <Input placeholder="Kode pasien" />
+          </Form.Item>
+          <Form.Item label="NIK" name="identifier" rules={[{ required: true, message: 'NIK wajib' }]}>
+            <Input placeholder="Nomor Induk Kependudukan" />
           </Form.Item>
           <Form.Item label="Nama" name="name" rules={[{ required: true, message: 'Nama wajib' }]}>
             <Input placeholder="Nama pasien" />

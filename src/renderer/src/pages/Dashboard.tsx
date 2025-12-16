@@ -31,12 +31,12 @@ const items = [
   },
 
   {
-    label: 'Patient',
+    label: 'Pasien',
     key: '/dashboard/patient',
     icon: <UserOutlined />
   },
   {
-    label: 'Encounter',
+    label: 'Kunjungan Pasien ',
     key: '/dashboard/encounter',
     icon: <CalendarOutlined />
   }
