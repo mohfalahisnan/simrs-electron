@@ -110,6 +110,7 @@ export function EncounterTable() {
 
   return (
     <div>
+      <h2 className="text-2xl font-bold mb-4">Daftar Kunjungan</h2>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <Input
           type="text"
