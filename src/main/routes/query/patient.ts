@@ -259,7 +259,6 @@ export const deleteById = async (_ctx, args: z.infer<typeof schemas.deleteById.a
     })
     const BackendDeleteSchema = z.object({
       success: z.boolean(),
-      result: z.any().optional(),
       message: z.string().optional(),
       error: z.string().optional()
     })

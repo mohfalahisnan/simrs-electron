@@ -270,7 +270,7 @@ export const deleteById = async (_ctx: IpcContext, args: z.infer<typeof schemas.
     })
     const BackendDeleteSchema = z.object({
       success: z.boolean(),
-      result: z.any().optional(),
+      result: z.object({}).optional(),
       message: z.string().optional(),
       error: z.string().optional()
     })

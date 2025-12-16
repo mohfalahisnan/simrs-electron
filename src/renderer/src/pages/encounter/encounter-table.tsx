@@ -5,7 +5,14 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { queryClient } from '@renderer/query-client'
 import type { EncounterAttributes } from '@shared/encounter'
+import { EncounterStatus } from '@shared/encounter'
 import { DeleteOutlined, EditOutlined, MoreOutlined } from '@ant-design/icons'
+
+type EncounterRow = Omit<EncounterAttributes, 'visitDate' | 'status'> & {
+  visitDate: string | Date
+  status: EncounterStatus | 'scheduled' | 'in_progress' | 'completed'
+  patient?: { name?: string }
+}
 
 const columns = [
   { title: 'Tanggal Kunjungan', dataIndex: 'visitDate', key: 'visitDate', render: (v: string) => new Date(v).toLocaleString() },
@@ -19,13 +26,13 @@ const columns = [
     key: 'action',
     width: 60,
     align: 'center' as const,
-    render: (_: EncounterAttributes, record: EncounterAttributes & { patient?: { name?: string } }) => (
+    render: (_: EncounterRow, record: EncounterRow) => (
       <RowActions record={record} />
     )
   }
 ]
 
-function RowActions({ record }: { record: EncounterAttributes }) {
+function RowActions({ record }: { record: EncounterRow }) {
   const navigate = useNavigate()
   const deleteMutation = useMutation({
     mutationKey: ['encounter', 'delete'],
@@ -74,18 +81,22 @@ function RowActions({ record }: { record: EncounterAttributes }) {
 export function EncounterTable() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
-  const { data, refetch, isError } = useQuery({
+  type EncounterListResult = {
+    success: boolean
+    data?: EncounterRow[]
+    error?: string
+  }
+  const { data, refetch, isError } = useQuery<EncounterListResult>({
     queryKey: ['encounter', 'list'],
     queryFn: () => {
       const fn = window.api?.query?.encounter?.list
       if (!fn) throw new Error('API encounter tidak tersedia. Silakan restart aplikasi/dev server.')
-      return fn()
+      return fn() as Promise<EncounterListResult>
     }
   })
 
   const filtered = useMemo(() => {
-    const source: (EncounterAttributes & { patient?: { name?: string } })[] =
-      (data?.data as any[]) || []
+    const source: EncounterRow[] = Array.isArray(data?.data) ? (data!.data as EncounterRow[]) : []
     const q = search.trim().toLowerCase()
     if (!q) return source
     return source.filter((e) => {

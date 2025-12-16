@@ -23,7 +23,7 @@ function MainRoute() {
     <Routes location={location} key={location.pathname.split('/')[1]}>
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/dashboard" element={<Dashboard />}>
+        <Route path="/dashboard/*" element={<Dashboard />}>
           <Route index element={<DashboardHome />} />
           <Route path="expense" element={<Expense />}>
             <Route index element={<ExpenseTable />} />
