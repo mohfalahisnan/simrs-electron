@@ -49,7 +49,7 @@ export async function login(ctx: IpcContext, data: LoginArgs) {
   const store = ctx.sessionStore
   if (!store) return { success: false, error: 'session store unavailable' }
 
-  const base = process.env.VITE_API_URL || process.env.VITE_BACKEND_SERVER || 'http://localhost:8810'
+  const base = process.env.API_URL || process.env.BACKEND_SERVER || 'http://localhost:8810'
   const url = String(base).endsWith('/') ? `${String(base).slice(0, -1)}/api/login` : `${String(base)}/api/login`
   const body = JSON.stringify({ nik: data.username, password: data.password })
   const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body })
