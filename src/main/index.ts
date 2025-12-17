@@ -2,7 +2,6 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { registerMacHandlers } from './ipc/macaddress'
 import { initDatabase } from './database'
 import { IpcRouter } from './ipc/router'
 import { SessionStore } from './ipc/protected/session-store'
@@ -213,7 +212,6 @@ app.whenReady().then(() => {
   // Register routes
   initDatabase()
   autoRegisterRoutes(router, { sessionStore })
-  registerMacHandlers()
   router.generatePreloadTypes()
   createWindow()
 
