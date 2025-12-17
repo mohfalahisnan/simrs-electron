@@ -83,6 +83,11 @@ const items = [
         icon: <DashboardOutlined />
       },
       {
+        label: 'Pemeriksaan Utama',
+        key: '/dashboard/services/pemeriksaan-utama',
+        icon: <WalletOutlined />
+      },
+      {
         label: 'Pemeriksaan Umum',
         key: '/dashboard/services/general-checkup',
         icon: <WalletOutlined />

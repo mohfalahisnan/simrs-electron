@@ -20,6 +20,10 @@ import EncounterMonitor from './pages/encounter/monitor/encounter-monitor'
 import DiagnosticTable from './pages/diagnostic/diagnostic-table'
 import Diagnostic from './pages/diagnostic/diagnostic'
 import DiagnosticForm from './pages/diagnostic/diagnostic-form'
+import Services from './pages/services/services'
+import PemeriksaanUtamaTable from './pages/services/pemeriksaan-utama/table'
+import PemeriksaanUtamaPage from './pages/services/pemeriksaan-utama/page'
+import PemeriksaanUtamaEditPage from './pages/services/pemeriksaan-utama/edit'
 
 function MainRoute() {
   const location = useLocation()
@@ -55,6 +59,11 @@ function MainRoute() {
             <Route index element={<DiagnosticTable />} />
             <Route path="create" element={<DiagnosticForm />} />
             <Route path="edit/:id" element={<DiagnosticForm />} />
+          </Route>
+          <Route path="services" element={<Services />}>
+            <Route index element={<PemeriksaanUtamaPage />} />
+            <Route path="pemeriksaan-utama" element={<PemeriksaanUtamaPage />} />
+            <Route path="pemeriksaan-utama/edit" element={<PemeriksaanUtamaEditPage />} />
           </Route>
         </Route>
         <Route
