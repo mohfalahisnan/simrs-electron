@@ -90,7 +90,7 @@ export const list = async (ctx: IpcContext, _args?: z.infer<typeof schemas.list.
           .optional()
       })
         .array()
-        .optional(),
+        .optional().nullable(),
       pagination: z.object({ page: z.number(), pages: z.number(), count: z.number() }).optional(),
       message: z.string().optional(),
       error: z.string().optional()
