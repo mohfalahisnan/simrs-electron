@@ -15,7 +15,10 @@ export enum DiagnosticReportStatus {
 
 export const DiagnosticReportSchema = z.object({
   identifier: z.string().nullable().optional(),
-  basedOn: z.array(z.number()).nullable().optional(),
+  basedOn: z
+    .array(z.union([z.number(), z.string()]))
+    .nullable()
+    .optional(),
   status: z.nativeEnum(DiagnosticReportStatus),
   category: z.array(z.string()).nullable().optional(),
   code: z.string(),
@@ -25,18 +28,33 @@ export const DiagnosticReportSchema = z.object({
   effectivePeriodStart: z.union([z.date(), z.string()]).nullable().optional(),
   effectivePeriodEnd: z.union([z.date(), z.string()]).nullable().optional(),
   issued: z.union([z.date(), z.string()]).nullable().optional(),
-  performer: z.array(z.number()).nullable().optional(),
+  performer: z
+    .array(z.union([z.number(), z.string()]))
+    .nullable()
+    .optional(),
   performerType: z.string().nullable().optional(),
-  resultsInterpreter: z.array(z.number()).nullable().optional(),
+  resultsInterpreter: z
+    .array(z.union([z.number(), z.string()]))
+    .nullable()
+    .optional(),
   resultsInterpreterType: z.string().nullable().optional(),
-  specimenId: z.array(z.number()).nullable().optional(),
-  result: z.array(z.number()).nullable().optional(),
-  imagingStudy: z.array(z.number()).nullable().optional(),
+  specimenId: z
+    .array(z.union([z.number(), z.string()]))
+    .nullable()
+    .optional(),
+  result: z
+    .array(z.union([z.number(), z.string()]))
+    .nullable()
+    .optional(),
+  imagingStudy: z
+    .array(z.union([z.number(), z.string()]))
+    .nullable()
+    .optional(),
   media: z
     .array(
       z.object({
         comment: z.string().optional(),
-        linkId: z.number()
+        linkId: z.union([z.number(), z.string()])
       })
     )
     .nullable()
